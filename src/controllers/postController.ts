@@ -20,8 +20,10 @@ export type PostType = {
  */
 
 export const getPosts = asyncHandler(async (req: express.Request, res: express.Response) => {
-  const posts = await Post.find({});
-  res.json(posts);
+  await Post.find({}, (error, post) => {
+    if (error) res.send(error);
+    res.json(post);
+  });
 });
 
 /**
@@ -32,7 +34,7 @@ export const getPosts = asyncHandler(async (req: express.Request, res: express.R
 export const addPost = asyncHandler(async (req: express.Request, res: express.Response) => {
   const newPost = new Post(req.body as PostType);
 
-  newPost.save((error, post) => {
+  await newPost.save((error, post) => {
     if (error) res.send(error);
     res.json(post);
   });
@@ -44,7 +46,7 @@ export const addPost = asyncHandler(async (req: express.Request, res: express.Re
  */
 
 export const deletePost = asyncHandler(async (req: express.Request, res: express.Response) => {
-  Post.deleteOne(
+  await Post.deleteOne(
     {
       _id: req.params.postId,
     },
@@ -61,7 +63,7 @@ export const deletePost = asyncHandler(async (req: express.Request, res: express
  */
 
 export const updatePost = asyncHandler(async (req: express.Request, res: express.Response) => {
-  Post.findOneAndUpdate(
+  await Post.findOneAndUpdate(
     {
       _id: req.params.postId,
     },
